@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, product-service, ml-recommender, react-frontend, angular-admin]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (for Node, Angular, React)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set up Go (for Go services)
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install dependencies
+        run: |
+          cd services/${{ matrix.service }}
+          if [ -f package.json ]; then
+            npm install
+          elif [ -f go.mod ]; then
+            go mod tidy
+          fi
+
+      - name: Run tests
+        run: |
+          cd services/${{ matrix.service }}
+          if [ -f package.json ]; then
+            npm run test
+          elif [ -f go.mod ]; then
+            go test ./...
+          fi
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Production (placeholder)
+        run: echo "Deploying ${{ matrix.service }} to production..."

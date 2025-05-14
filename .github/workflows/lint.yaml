@@ -1,0 +1,47 @@
+name: Lint Services
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - services/auth-service
+          - services/product-service
+          - services/ml-recommender
+          - frontend/react-storefront
+          - frontend/angular-admin
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js (for JS/TS services)
+        if: contains(matrix.service, 'product-service') || contains(matrix.service, 'frontend')
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Set up Go (for Go services)
+        if: contains(matrix.service, 'auth-service')
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Set up Python (for ML services)
+        if: contains(matrix.service, 'ml-recommender')
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps + run lint
+        run: |
+          if [ -f "package.json" ]; then npm ci && npm run lint; fi
+          if [ -f "go.mod" ]; then go vet ./...; fi
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt && pylint .; fi
