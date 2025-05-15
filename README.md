@@ -26,6 +26,14 @@ A microservices-based e-commerce system focused on sustainability and eco-friend
 | Logging         | ELK Stack (Elasticsearch, Logstash, Kibana) |
 | Infra-as-Code    | Terraform (optional)                   |
 
+## 📖 Documentation
+
+- [Architecture](./docs/architecture.md)
+- [ER Diagram](./docs/erd.md)
+- [Deployment](./docs/deployment.md)
+- [Testing](./docs/testing.md)
+- [Security](./docs/security.md)
+
 ## 📦 Getting Started
 
 ```bash
