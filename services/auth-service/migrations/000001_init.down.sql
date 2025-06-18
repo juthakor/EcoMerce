@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS eco_badges;
+DROP TABLE IF EXISTS users;

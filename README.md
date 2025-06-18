@@ -49,3 +49,8 @@ For local development, copy `.env.example` to `.env` and fill in your own values
 ```bash
 cp .env.example .env
 ```
+
+### Setup MongoDB schema validation
+```bash
+make product-setup-validator
+```
